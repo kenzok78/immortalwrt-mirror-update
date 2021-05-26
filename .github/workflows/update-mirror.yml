@@ -21,7 +21,7 @@ jobs:
           - openwrt-21.02
           - master
       fail-fast: false
-      max-parallel: 2
+      max-parallel: 1
 
     steps:
       - name: Checkout the Repo
@@ -60,28 +60,40 @@ jobs:
           make download -j128
           find dl -size -1024c -exec rm -f {} \;
 
+      - name: Fetch Cached Uploaded Files List
+        uses: actions/cache@v2
+        with:
+          path: "uploaded-files"
+          key: immortalwrt-mirror-uploaded-${{ matrix.branch }}-${{ github.run_id }}
+          restore-keys: |
+            immortalwrt-mirror-uploaded-${{ matrix.branch }}-
+            immortalwrt-mirror-uploaded-${{ matrix.branch }}
+
+      - name: Upload Files to OneDrive
+        env:
+          UPLOADER_TYPE: "onedrive"
+          UPLOADER_INFO: ${{ secrets.UPLOADER_INFO }}
+          UPLOADER_CONF: "uploader.json"
+        run: |
+          ./uploader-cache/detect-upload-files.sh
+          [ "$(ls -A "package-sources"/* | wc -l)" -gt "0" ] || exit 0
+          echo -e "$UPLOADER_INFO" > "$UPLOADER_CONF"
+          ./onedrive-uploader/OneDriveUploader -f -c "$UPLOADER_CONF" -s "package-sources" -r "immortalwrt"
+          ./uploader-cache/gen-downloaded-hash.sh
+
       - name: Upload Files to AliyunDrive
         env:
-          BRANCH: ${{ matrix.branch }}
-          SOURCE_PATH: "immortalwrt"
+          UPLOADER_TYPE: "alidrive"
           ALI_DRIVE_ID: ${{ secrets.ALI_DRIVE_ID }}
           ALI_REFRESH_TOKEN: ${{ secrets.ALI_REFRESH_TOKEN }}
         run: |
+          ./uploader-cache/detect-upload-files.sh
+          [ "$(ls -A "package-sources"/* | wc -l)" -gt "0" ] || exit 0
           pushd aliyundrive-uploader
           ./gen-alidriveconf.sh
           python3 main.py
           popd
-
-      - name: Upload Files to OneDrive
-        env:
-          BRANCH: ${{ matrix.branch }}
-          SOURCE_PATH: "immortalwrt"
-          UPLOADER_INFO: ${{ secrets.UPLOADER_INFO }}
-          UPLOADER_CONF: "uploader.json"
-        run: |
-          mv "$SOURCE_PATH/dl" "$SOURCE_PATH/$BRANCH"
-          echo -e "$UPLOADER_INFO" > "$UPLOADER_CONF"
-          ./onedrive-uploader/OneDriveUploader -f -c "$UPLOADER_CONF" -s "$SOURCE_PATH/$BRANCH" -r "immortalwrt/package-sources"
+          ./uploader-cache/gen-downloaded-hash.sh
 
   cleanup-workflow-runs:
     runs-on: ubuntu-18.04

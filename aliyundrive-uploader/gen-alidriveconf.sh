@@ -7,10 +7,10 @@ cat > "$PWD/config.json" <<EOF
 {
   "REFRESH_TOKEN": "$ALI_REFRESH_TOKEN",
   "DRIVE_ID": "$ALI_DRIVE_ID",
-  "ROOT_PATH": "immortalwrt/package-sources/$BRANCH",
-  "FILE_PATH": "$PWD/../$SOURCE_PATH/dl",
+  "ROOT_PATH": "immortalwrt/package-sources",
+  "FILE_PATH": "../package-sources",
   "MULTITHREADING": true,
-  "MAX_WORKERS": 2,
+  "MAX_WORKERS": 4,
   "CHUNK_SIZE": 104857600,
   "RESUME": true,
   "OVERWRITE": false
