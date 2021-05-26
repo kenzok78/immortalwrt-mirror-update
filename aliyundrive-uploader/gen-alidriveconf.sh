@@ -9,8 +9,11 @@ cat > "$PWD/config.json" <<EOF
   "DRIVE_ID": "$ALI_DRIVE_ID",
   "ROOT_PATH": "immortalwrt/package-sources/$BRANCH",
   "FILE_PATH": "$PWD/../$SOURCE_PATH/dl",
-  "MULTITHREADING": false,
-  "MAX_WORKERS": 5
+  "MULTITHREADING": true,
+  "MAX_WORKERS": 2,
+  "CHUNK_SIZE": 104857600,
+  "RESUME": true,
+  "OVERWRITE": false
 }
 EOF
 

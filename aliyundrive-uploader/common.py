@@ -5,16 +5,42 @@
 # | Author: 李小恩 <i@abcyun.cc>
 # +-------------------------------------------------------------------
 import hashlib
+import json
 import os
 import random
+import sys
+import threading
 import time
+from xml.dom.minidom import parseString
+
+LOCK = threading.Lock()
+DATA = {
+    'config': {},
+    'folder_id_dict': {},
+    'tasks': {}
+}
 
 
-def get_hash(filepath):
+# 处理路径
+def qualify_path(path):
+    if not path:
+        return ''
+    return path.replace('/', os.sep).replace('\\\\', os.sep).rstrip(os.sep) + os.sep
+
+
+# 获取运行目录
+def get_running_path(path=''):
+    if getattr(sys, 'frozen', False):
+        return os.path.dirname(sys.executable) + path
+    elif __file__:
+        return os.path.dirname(__file__) + path
+
+
+def get_hash(filepath, block_size=2 * 1024 * 1024):
     with open(filepath, 'rb') as f:
         sha1 = hashlib.sha1()
         while True:
-            data = f.readline()
+            data = f.read(block_size)
             if not data:
                 break
             sha1.update(data)
@@ -46,6 +72,7 @@ def get_all_file_relative(path):
             result.append(i)
     return result
 
+
 def print_info(message):
     i = random.randint(34, 37)
     log(message)
@@ -72,8 +99,53 @@ def date(timestamp):
 
 
 def log(message):
-    file = os.getcwd() + '/log/' + time.strftime("%Y-%m-%d", time.localtime()) + '.log'
+    file = get_running_path('/log/' + time.strftime("%Y-%m-%d", time.localtime()) + '.log')
     if not os.path.exists(os.path.dirname(file)):
         os.mkdir(os.path.dirname(file))
     with open(file, 'a') as f:
         f.write('【{date}】{message}\n'.format(date=date(time.time()), message=message))
+
+
+def get_xml_tag_value(xml_string, tag_name):
+    DOMTree = parseString(xml_string)
+    DOMTree = DOMTree.documentElement
+    tag = DOMTree.getElementsByTagName(tag_name)
+    if len(tag) > 0:
+        for node in tag[0].childNodes:
+            if node.nodeType == node.TEXT_NODE:
+                return node.data
+    return False
+
+
+def load_task():
+    LOCK.acquire()
+    try:
+        with open(get_running_path('/tasks.json'), 'rb') as f:
+            task = f.read().decode('utf-8')
+            return json.loads(task)
+    except Exception:
+        return {}
+    finally:
+        LOCK.release()
+
+
+def save_task(task):
+    LOCK.acquire()
+    try:
+        with open(get_running_path('/tasks.json'), 'w') as f:
+            f.write(json.dumps(task))
+            f.flush()
+    finally:
+        LOCK.release()
+
+
+def read_in_chunks(file_object, chunk_size=16 * 1024, total_size=10 * 1024 * 1024):
+    load_size = 0
+    while True:
+        if load_size >= total_size:
+            break
+        data = file_object.read(chunk_size)
+        if not data:
+            break
+        load_size += 16 * 1024
+        yield data
