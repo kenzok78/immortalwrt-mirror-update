@@ -66,8 +66,7 @@ jobs:
           path: "uploaded-files"
           key: immortalwrt-mirror-uploaded-${{ matrix.branch }}-${{ github.run_id }}
           restore-keys: |
-            immortalwrt-mirror-uploaded-${{ matrix.branch }}-
-            immortalwrt-mirror-uploaded-${{ matrix.branch }}
+            immortalwrt-mirror-uploaded-
 
       - name: Upload Files to OneDrive
         env:

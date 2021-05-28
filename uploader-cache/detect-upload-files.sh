@@ -20,8 +20,8 @@ if [ "$(ls -A "$DL_PATH"/* | wc -l)" -gt "0" ]; then
 			if [ "$FILE_CACHED_HASH" != "$FILE_HASH" ]; then
 				cp -fp "$i" "$SOURCE_DIR"/
 				echo -e "Refresh uploaded file: ${i##*/}"
-			else
-				echo -e "Skipped uploaded file: ${i##*/}"
+			# else
+			# 	echo -e "Skipped uploaded file: ${i##*/}"
 			fi
 		else
 			cp -fp "$i" "$SOURCE_DIR"/
