@@ -22,3 +22,5 @@ else
 	echo -e "No files found."
 	exit 1
 fi
+
+exit 0
