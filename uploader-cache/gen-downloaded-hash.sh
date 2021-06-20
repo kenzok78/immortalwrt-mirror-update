@@ -4,7 +4,7 @@
 # Copyright (C) 2021 ImmortalWrt.org
 
 LIST_FILE="uploaded-files/$UPLOADER_TYPE.sha256sum"
-SOURCE_DIR="package-sources"
+SOURCE_DIR="package-sources-mirror"
 
 mkdir -p "uploaded-files"
 

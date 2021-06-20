@@ -49,9 +49,6 @@ jobs:
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
-      - name: Remove Download Mirrors
-        run: sed -i -e "/unshift @mirrors/d" "immortalwrt/scripts/download.pl"
-
       - name: Download Packages
         run: |
           cd "immortalwrt"
@@ -78,19 +75,18 @@ jobs:
 
       - name: Upload Files to OneDrive
         env:
+          ODRS_REFRESH_TOKEN: ${{ secrets.ODRS_REFRESH_TOKEN }}
           UPLOADER_TYPE: "onedrive"
-          UPLOADER_INFO: ${{ secrets.UPLOADER_INFO }}
           UPLOADER_CONF: "uploader.json"
         run: |
           ./uploader-cache/detect-upload-files.sh
-          [ "$(ls -A "package-sources"/* | wc -l)" -gt "0" ] || exit 0
+          [ "$(ls -A "package-sources-mirror"/* | wc -l)" -gt "0" ] || exit 0
           [ -f "uploader-keys/$UPLOADER_TYPE.json" ] && cp -f "uploader-keys/$UPLOADER_TYPE.json" "$UPLOADER_CONF"
-          [ -f "$UPLOADER_CONF" ] || echo -e "$UPLOADER_INFO" > "$UPLOADER_CONF"
-          ./onedrive-uploader/OneDriveUploader -f -c "$UPLOADER_CONF" -s "package-sources" -r "immortalwrt"
+          [ -f "$UPLOADER_CONF" ] || ./onedrive-uploader/gen-onedriveconf.sh
+          ./onedrive-uploader/OneDriveUploader -f -c "$UPLOADER_CONF" -s "package-sources-mirror" -r "/"
           ./uploader-cache/gen-downloaded-hash.sh
           [ -d "uploader-keys" ] || mkdir -p "uploader-keys"
           cp -f "$UPLOADER_CONF" "uploader-keys/$UPLOADER_TYPE.json"
-
 
       - name: Upload Files to AliyunDrive
         env:
@@ -99,7 +95,7 @@ jobs:
           ALI_REFRESH_TOKEN: ${{ secrets.ALI_REFRESH_TOKEN }}
         run: |
           ./uploader-cache/detect-upload-files.sh
-          [ "$(ls -A "package-sources"/* | wc -l)" -gt "0" ] || exit 0
+          [ "$(ls -A "package-sources-mirror"/* | wc -l)" -gt "0" ] || exit 0
           pushd aliyundrive-uploader
           [ -f "../uploader-keys/$UPLOADER_TYPE.json" ] && cp -f "../uploader-keys/$UPLOADER_TYPE.json" "config.json"
           [ -f "config.json" ] || ./gen-alidriveconf.sh
