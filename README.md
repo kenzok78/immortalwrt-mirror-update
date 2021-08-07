@@ -2,4 +2,4 @@
 [SuLingGG/OpenWrt-Mini/update-immortalwrt-1806-dl-mirror.yml](https://github.com/SuLingGG/OpenWrt-Mini/blob/381524b297bc346c3afbf779eef8601ffe6c469f/.github/workflows/update-immortalwrt-1806-dl-mirror.yml).<br/>
 [MoeClub/OneList/OneDriveUploader](https://github.com/MoeClub/OneList/tree/206b44d9a129d383211806f02a600a96893e2445/OneDriveUploader).<br/>
 [\[Linux 1\] Shell“ 多线程”，提高工作效率](https://zhuanlan.zhihu.com/p/68574239).<br/>
-[Hidove/aliyundrive-uploader](https://github.com/Hidove/aliyundrive-uploader/tree/3b6f3da834c69d49b868d5d0bd3c45705bfb4795).
+[Hidove/aliyundrive-uploader](https://github.com/Hidove/aliyundrive-uploader/tree/d16b104bc924b390c82789338dd9f60e7ed994ba).
