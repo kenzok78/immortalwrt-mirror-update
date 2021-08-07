@@ -80,10 +80,9 @@ jobs:
           UPLOADER_CONF: "uploader.json"
         run: |
           ./uploader-cache/detect-upload-files.sh
-          [ "$(ls -A "package-sources-mirror"/* | wc -l)" -gt "0" ] || exit 0
-          [ -f "uploader-keys/$UPLOADER_TYPE.json" ] && cp -f "uploader-keys/$UPLOADER_TYPE.json" "$UPLOADER_CONF"
-          [ -f "$UPLOADER_CONF" ] || ./onedrive-uploader/gen-onedriveconf.sh
-          ./onedrive-uploader/OneDriveUploader -f -c "$UPLOADER_CONF" -s "package-sources-mirror" -r "/"
+          [ "$(ls -A "package-sources"/* | wc -l)" -gt "0" ] || exit 0
+          [ -f "uploader-keys/$UPLOADER_TYPE.json" ] && cp -f "uploader-keys/$UPLOADER_TYPE.json" "$UPLOADER_CONF" || ./onedrive-uploader/gen-onedriveconf.sh
+          ./onedrive-uploader/OneDriveUploader -f -c "$UPLOADER_CONF" -s "package-sources" -r "/"
           ./uploader-cache/gen-downloaded-hash.sh
           [ -d "uploader-keys" ] || mkdir -p "uploader-keys"
           cp -f "$UPLOADER_CONF" "uploader-keys/$UPLOADER_TYPE.json"
@@ -95,15 +94,16 @@ jobs:
           ALI_REFRESH_TOKEN: ${{ secrets.ALI_REFRESH_TOKEN }}
         run: |
           ./uploader-cache/detect-upload-files.sh
-          [ "$(ls -A "package-sources-mirror"/* | wc -l)" -gt "0" ] || exit 0
+          [ "$(ls -A "package-sources"/* | wc -l)" -gt "0" ] || exit 0
           pushd aliyundrive-uploader
-          [ -f "../uploader-keys/$UPLOADER_TYPE.json" ] && cp -f "../uploader-keys/$UPLOADER_TYPE.json" "config.json"
-          [ -f "config.json" ] || ./gen-alidriveconf.sh
+          [ -f "../uploader-keys/$UPLOADER_TYPE.json" ] && cp -f "../uploader-keys/$UPLOADER_TYPE.json" "config.json" || ./gen-alidriveconf.sh
+          [ -f "../uploader-keys/$UPLOADER_TYPE.db" ] && cp -f "../uploader-keys/$UPLOADER_TYPE.db" "db.db"
           python3 main.py
           popd
           ./uploader-cache/gen-downloaded-hash.sh
           [ -d "uploader-keys" ] || mkdir -p "uploader-keys"
           cp -f "aliyundrive-uploader/config.json" "uploader-keys/$UPLOADER_TYPE.json"
+          cp -f "aliyundrive-uploader/db.db" "uploader-keys/$UPLOADER_TYPE.db"
 
   cleanup-workflow-runs:
     runs-on: ubuntu-18.04

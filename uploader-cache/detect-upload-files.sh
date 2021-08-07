@@ -5,7 +5,7 @@
 
 DL_PATH="immortalwrt/dl"
 LIST_FILE="uploaded-files/$UPLOADER_TYPE.sha256sum"
-SOURCE_DIR="package-sources-mirror"
+SOURCE_DIR="package-sources"
 
 rm -rf "$SOURCE_DIR"
 mkdir "$SOURCE_DIR"

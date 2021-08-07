@@ -4,7 +4,7 @@
 # Copyright (C) 2021 ImmortalWrt.org
 
 LIST_FILE="uploaded-files/$UPLOADER_TYPE.sha256sum"
-SOURCE_DIR="package-sources-mirror"
+SOURCE_DIR="package-sources"
 
 mkdir -p "uploaded-files"
 
@@ -22,5 +22,7 @@ else
 	echo -e "No files found."
 	exit 1
 fi
+
+rm -rf "$SOURCE_DIR"
 
 exit 0
