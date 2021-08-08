@@ -98,7 +98,7 @@ jobs:
           pushd aliyundrive-uploader
           [ -f "../uploader-keys/$UPLOADER_TYPE.json" ] && cp -f "../uploader-keys/$UPLOADER_TYPE.json" "config.json" || ./gen-alidriveconf.sh
           [ -f "../uploader-keys/$UPLOADER_TYPE.db" ] && cp -f "../uploader-keys/$UPLOADER_TYPE.db" "db.db"
-          python3 main.py
+          python3 main.py || echo "Never mind."
           popd
           ./uploader-cache/gen-downloaded-hash.sh
           [ -d "uploader-keys" ] || mkdir -p "uploader-keys"
