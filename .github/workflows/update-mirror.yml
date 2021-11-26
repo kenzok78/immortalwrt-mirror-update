@@ -73,6 +73,13 @@ jobs:
           restore-keys: |
             immortalwrt-mirror-uploader-
 
+      - name: Upload Files to ImmortalWrt Download Server
+        env:
+          RSYNC_ADDR: ${{ secrets.RSYNC_ADDR }}
+          RSYNC_USER: ${{ secrets.RSYNC_USER }}
+          RSYNC_PASS: ${{ secrets.RSYNC_PASS }}
+        run: sshpass -p "$RSYNC_PASS" rsync -ahvzHP --exclude "*cache*" "immortalwrt/dl/" "rsync://${RSYNC_USER}@${RSYNC_ADDR}/dl/"
+
       - name: Upload Files to OneDrive
         env:
           ODRS_REFRESH_TOKEN: ${{ secrets.ODRS_REFRESH_TOKEN }}
