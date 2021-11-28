@@ -80,6 +80,16 @@ jobs:
           RSYNC_PASS: ${{ secrets.RSYNC_PASS }}
         run: sshpass -p "$RSYNC_PASS" rsync -ahvzHP --exclude "*cache*" "immortalwrt/dl/" "rsync://${RSYNC_USER}@${RSYNC_ADDR}/dl/"
 
+      - name: Upload Files to OSDN
+        uses: Pendect/action-rsyncer@2554a1e574cf229fb144f23ea5971dbdca8ae8e3
+        with:
+          flags: '-ahvHP'
+          options: '--exclude "*cache*"'
+          src: 'immortalwrt/dl/'
+          dest: '${{ secrets.OSDN_USER }}@storage.osdn.net:/storage/groups/i/im/immortalwrt/sources/'
+        env:
+          DEPLOY_KEY: ${{ secrets.OSDN_KEY }}
+
       - name: Upload Files to OneDrive
         env:
           ODRS_REFRESH_TOKEN: ${{ secrets.ODRS_REFRESH_TOKEN }}
