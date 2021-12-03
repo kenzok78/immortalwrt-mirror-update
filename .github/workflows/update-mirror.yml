@@ -78,7 +78,7 @@ jobs:
           RSYNC_ADDR: ${{ secrets.RSYNC_ADDR }}
           RSYNC_USER: ${{ secrets.RSYNC_USER }}
           RSYNC_PASS: ${{ secrets.RSYNC_PASS }}
-        run: sshpass -p "$RSYNC_PASS" rsync -ahvzHP --exclude "*cache*" "immortalwrt/dl/" "rsync://${RSYNC_USER}@${RSYNC_ADDR}/dl/"
+        run: sshpass -p "$RSYNC_PASS" rsync -ahvHP --exclude "*cache*" "immortalwrt/dl/" "rsync://${RSYNC_USER}@${RSYNC_ADDR}/dl/"
 
       - name: Upload Files to OSDN
         uses: Pendect/action-rsyncer@2554a1e574cf229fb144f23ea5971dbdca8ae8e3
