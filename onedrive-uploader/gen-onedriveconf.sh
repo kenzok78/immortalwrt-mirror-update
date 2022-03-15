@@ -5,16 +5,13 @@
 
 cat > "$PWD/uploader.json" <<EOF
 {
-  "Drive": "OneDrive",
   "RefreshToken": "$ODRS_REFRESH_TOKEN",
-  "ThreadNum": 10,
-  "BlockSize": 10,
+  "RefreshInterval": 1500,
+  "ThreadNum": "10",
+  "BlockSize": "10",
+  "SigleFile": "100",
   "MainLand": false,
-  "Language": "en",
-  "TimeOut": 60,
-  "BotKey": "",
-  "UserID": "",
-  "Other": null
+  "MSAccount": false
 }
 EOF
 

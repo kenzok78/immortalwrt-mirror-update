@@ -99,7 +99,7 @@ jobs:
           ./uploader-cache/detect-upload-files.sh
           [ "$(ls -A "package-sources"/* | wc -l)" -gt "0" ] || exit 0
           [ -f "uploader-keys/$UPLOADER_TYPE.json" ] && cp -f "uploader-keys/$UPLOADER_TYPE.json" "$UPLOADER_CONF" || ./onedrive-uploader/gen-onedriveconf.sh
-          ./onedrive-uploader/LightUploader -c "$UPLOADER_CONF" -f "package-sources" -r "/" -m 1
+          ./onedrive-uploader/OneDriveUploader -f -c "$UPLOADER_CONF" -s "package-sources" -r "/"
           ./uploader-cache/gen-downloaded-hash.sh
           [ -d "uploader-keys" ] || mkdir -p "uploader-keys"
           cp -f "$UPLOADER_CONF" "uploader-keys/$UPLOADER_TYPE.json"
