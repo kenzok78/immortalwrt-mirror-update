@@ -76,14 +76,16 @@ jobs:
         env:
           RSYNC_ADDR: ${{ secrets.RSYNC_ADDR }}
           RSYNC_USER: ${{ secrets.RSYNC_USER }}
-          RSYNC_PASS: ${{ secrets.RSYNC_PASS }}
-        run: sshpass -p "$RSYNC_PASS" rsync -ahvHP --exclude "*cache*" "immortalwrt/dl/" "rsync://${RSYNC_USER}@${RSYNC_ADDR}/dl/"
+          RSYNC_PASSWORD: ${{ secrets.RSYNC_PASS }}
+        run: |
+          find 'immortalwrt/dl/' -maxdepth 1 -type f -not -size 0 -not -name '.*' -not -name '*.hash' -not -name '*.dl' -printf '%f\n' > 'sourcelist'
+          rsync --files-from="sourcelist" --size-only --delay-updates --partial-dir=".~tmp~$GITHUB_RUN_ID" -ahv "immortalwrt/dl/" "rsync://${RSYNC_USER}@${RSYNC_ADDR}/dl/"
 
       - name: Upload Files to OSDN
         uses: Pendect/action-rsyncer@2554a1e574cf229fb144f23ea5971dbdca8ae8e3
         with:
-          flags: '-ahvHP'
-          options: '--exclude "*cache*"'
+          flags: '-ahv'
+          options: '--files-from=sourcelist --size-only --delay-updates --partial-dir=.~tmp~${{ env.GITHUB_RUN_ID }}'
           src: 'immortalwrt/dl/'
           dest: '${{ secrets.OSDN_USER }}@storage.osdn.net:/storage/groups/i/im/immortalwrt/sources/'
         env:
