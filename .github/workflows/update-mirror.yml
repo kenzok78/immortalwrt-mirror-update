@@ -12,7 +12,7 @@ on:
 
 jobs:
   update-mirror:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         branch:
@@ -25,7 +25,7 @@ jobs:
 
     steps:
       - name: Checkout the Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Init Compilation Dependencies
         env:
@@ -36,7 +36,7 @@ jobs:
           sudo -E apt-get -qq clean
 
       - name: Checkout ImmortalWrt Source Tree on Branch ${{ matrix.branch }}
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: "immortalwrt/immortalwrt"
           ref: ${{ matrix.branch }}
@@ -57,7 +57,7 @@ jobs:
           find dl -size -1024c -exec rm -f {} \;
 
       - name: Fetch Cached Uploaded Files List
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: "uploaded-files"
           key: immortalwrt-mirror-uploaded-${{ matrix.branch }}-${{ github.run_id }}
@@ -65,7 +65,7 @@ jobs:
             immortalwrt-mirror-uploaded-
 
       - name: Fetch Cached Uploader Keys
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: "uploader-keys"
           key: immortalwrt-mirror-uploader-${{ github.run_id }}
@@ -106,7 +106,7 @@ jobs:
           cp -f "$UPLOADER_CONF" "uploader-keys/$UPLOADER_TYPE.json"
 
   cleanup-workflow-runs:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     needs: update-mirror
     steps:
       - name: Cleanup Workflow Runs
