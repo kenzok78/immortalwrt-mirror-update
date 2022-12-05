@@ -16,8 +16,6 @@ jobs:
     strategy:
       matrix:
         branch:
-          - openwrt-18.06
-          - openwrt-18.06-k5.4
           - openwrt-21.02
           - master
       fail-fast: false
