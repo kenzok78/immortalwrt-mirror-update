@@ -80,7 +80,7 @@ jobs:
           rsync --files-from="sourcelist" --size-only --delay-updates --partial-dir=".~tmp~$GITHUB_RUN_ID" -ahv "immortalwrt/dl/" "rsync://${RSYNC_USER}@${RSYNC_ADDR}/dl/"
 
       - name: Upload Files to OSDN
-        uses: Pendect/action-rsyncer@2554a1e574cf229fb144f23ea5971dbdca8ae8e3
+        uses: Pendect/action-rsyncer@9738db02560c333bf629a1533bd86ceda138e599
         with:
           flags: '-ahv'
           options: '--files-from=sourcelist --size-only --delay-updates --partial-dir=.~tmp~${{ env.GITHUB_RUN_ID }}'
