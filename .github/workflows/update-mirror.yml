@@ -16,7 +16,6 @@ jobs:
     strategy:
       matrix:
         branch:
-          - openwrt-21.02
           - master
       fail-fast: false
       max-parallel: 1
@@ -51,7 +50,7 @@ jobs:
           cd "immortalwrt"
           echo -e "CONFIG_ALL=y" > ".config"
           make defconfig
-          make download -j128
+          make download -j8
           find dl -size -1024c -exec rm -f {} \;
 
       - name: Fetch Cached Uploaded Files List
