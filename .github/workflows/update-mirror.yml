@@ -17,6 +17,7 @@ jobs:
       matrix:
         branch:
           - master
+          - openwrt-23.05
       fail-fast: false
       max-parallel: 1
 
