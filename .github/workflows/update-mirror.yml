@@ -54,14 +54,6 @@ jobs:
           make download -j8
           find dl -size -1024c -exec rm -f {} \;
 
-      - name: Fetch Cached Uploaded Files List
-        uses: actions/cache@v3
-        with:
-          path: "uploaded-files"
-          key: immortalwrt-mirror-uploaded-${{ matrix.branch }}-${{ github.run_id }}
-          restore-keys: |
-            immortalwrt-mirror-uploaded-
-
       - name: Fetch Cached Uploader Keys
         uses: actions/cache@v3
         with:
@@ -95,11 +87,10 @@ jobs:
           UPLOADER_TYPE: "onedrive"
           UPLOADER_CONF: "uploader.json"
         run: |
-          ./uploader-cache/detect-upload-files.sh
-          [ "$(ls -A "package-sources"/* | wc -l)" -gt "0" ] || exit 0
+          mkdir -p package-sources
+          for i in $(cat "sourcelist"); do mv "immortalwrt/dl/$i" "package-sources/"; done
           [ -f "uploader-keys/$UPLOADER_TYPE.json" ] && cp -f "uploader-keys/$UPLOADER_TYPE.json" "$UPLOADER_CONF" || ./onedrive-uploader/gen-onedriveconf.sh
           ./onedrive-uploader/OneDriveUploader -f -c "$UPLOADER_CONF" -s "package-sources" -r "/" -skip
-          ./uploader-cache/gen-downloaded-hash.sh
           [ -d "uploader-keys" ] || mkdir -p "uploader-keys"
           cp -f "$UPLOADER_CONF" "uploader-keys/$UPLOADER_TYPE.json"
 
