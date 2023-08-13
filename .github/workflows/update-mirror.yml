@@ -71,15 +71,15 @@ jobs:
           find 'immortalwrt/dl/' -maxdepth 1 -type f -not -size 0 -not -name '.*' -not -name '*.hash' -not -name '*.dl' -printf '%f\n' > 'sourcelist'
           rsync --files-from="sourcelist" --size-only --delay-updates --partial-dir=".~tmp~$GITHUB_RUN_ID" -ahv "immortalwrt/dl/" "rsync://${RSYNC_USER}@${RSYNC_ADDR}/dl/"
 
-      - name: Upload Files to OSDN
+      - name: Upload Files to SourceForge
         uses: Pendect/action-rsyncer@9738db02560c333bf629a1533bd86ceda138e599
         with:
           flags: '-ahv'
-          options: '--files-from=sourcelist --size-only --delay-updates --partial-dir=.~tmp~${{ env.GITHUB_RUN_ID }}'
+          options: '--files-from=sourcelist --size-only'
           src: 'immortalwrt/dl/'
-          dest: '${{ secrets.OSDN_USER }}@storage.osdn.net:/storage/groups/i/im/immortalwrt/sources/'
+          dest: '${{ secrets.SF_USER }}@frs.sourceforge.net:/home/frs/project/immortalwrt/sources/'
         env:
-          DEPLOY_KEY: ${{ secrets.OSDN_KEY }}
+          DEPLOY_KEY: ${{ secrets.SF_KEY }}
 
       - name: Upload Files to OneDrive
         env:
