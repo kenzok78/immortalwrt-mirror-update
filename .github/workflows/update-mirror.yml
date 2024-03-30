@@ -23,7 +23,7 @@ jobs:
 
     steps:
       - name: Checkout the Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Init Compilation Dependencies
         env:
@@ -34,7 +34,7 @@ jobs:
           sudo -E apt-get -qq clean
 
       - name: Checkout ImmortalWrt Source Tree on Branch ${{ matrix.branch }}
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: "immortalwrt/immortalwrt"
           ref: ${{ matrix.branch }}
@@ -55,7 +55,7 @@ jobs:
           find dl -size -1024c -exec rm -f {} \;
 
       - name: Fetch Cached Uploader Keys
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: "uploader-keys"
           key: immortalwrt-mirror-uploader-${{ github.run_id }}
@@ -81,26 +81,14 @@ jobs:
         env:
           DEPLOY_KEY: ${{ secrets.SF_KEY }}
 
-      - name: Upload Files to OneDrive
-        env:
-          ODRS_REFRESH_TOKEN: ${{ secrets.ODRS_REFRESH_TOKEN }}
-          UPLOADER_TYPE: "onedrive"
-          UPLOADER_CONF: "uploader.json"
-        run: |
-          mkdir -p package-sources
-          for i in $(cat "sourcelist"); do mv "immortalwrt/dl/$i" "package-sources/"; done
-          [ -f "uploader-keys/$UPLOADER_TYPE.json" ] && cp -f "uploader-keys/$UPLOADER_TYPE.json" "$UPLOADER_CONF" || ./onedrive-uploader/gen-onedriveconf.sh
-          ./onedrive-uploader/OneDriveUploader -f -c "$UPLOADER_CONF" -s "package-sources" -r "/" -skip
-          [ -d "uploader-keys" ] || mkdir -p "uploader-keys"
-          cp -f "$UPLOADER_CONF" "uploader-keys/$UPLOADER_TYPE.json"
-
   cleanup-workflow-runs:
     runs-on: ubuntu-latest
     needs: update-mirror
     steps:
       - name: Cleanup Workflow Runs
-        uses: GitRML/delete-workflow-runs@v1.2.1
+        uses: Mattraks/delete-workflow-runs@v2
         with:
           token: ${{ github.token }}
           repository: ${{ github.repository }}
           retain_days: 7
+          keep_minimum_runs: 1
