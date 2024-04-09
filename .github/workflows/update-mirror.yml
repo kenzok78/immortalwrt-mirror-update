@@ -54,14 +54,6 @@ jobs:
           make download -j8
           find dl -size -1024c -exec rm -f {} \;
 
-      - name: Fetch Cached Uploader Keys
-        uses: actions/cache@v4
-        with:
-          path: "uploader-keys"
-          key: immortalwrt-mirror-uploader-${{ github.run_id }}
-          restore-keys: |
-            immortalwrt-mirror-uploader-
-
       - name: Upload Files to ImmortalWrt Download Server
         env:
           RSYNC_ADDR: ${{ secrets.RSYNC_ADDR }}
